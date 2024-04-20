@@ -118,7 +118,6 @@ class FileChangeHandler(FileSystemEventHandler):
             added_line_numbers = self.log_changes(file_path, new_contents)
             self.file_contents[file_path] = new_contents
             self.last_modified_times[file_path] = os.path.getmtime(file_path)
-            # added_line_numbers = self.log_changes(file_path, new_contents)
             self.run_analyzers(file_path, added_line_numbers)
 
 
