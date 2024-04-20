@@ -8,9 +8,14 @@ class Flake8Analyzer():
         flake8_results = self.analyze_file_with_flake8(file_path)
         filtered_results = self.filter_flake8_results(
             flake8_results, added_line_numbers)
-        print("Filtered flake8 results:")
-        for result in filtered_results:
-            print(result)
+
+        if not filtered_results:
+            print("\n\nFlake8: No issues found for the newly added or changed lines in '{}'.".format(
+                file_path))
+        else:
+            print("\n\nFiltered flake8 results for '{}':".format(file_path))
+            for result in filtered_results:
+                print(result)
 
     def analyze_file_with_flake8(self, file_path):
         """Executes flake8 static analysis and returns the result."""

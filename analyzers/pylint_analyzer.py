@@ -8,9 +8,14 @@ class PylintAnalyzer():
         pylint_results = self.analyze_file_with_pylint(file_path)
         filtered_results = self.filter_pylint_results(
             pylint_results, added_line_numbers)
-        print("Filtered pylint results:")
-        for result in filtered_results:
-            print(result)
+
+        if not filtered_results:
+            print("\nPylint: No issues found for the newly added or changed lines in '{}'.".format(
+                file_path))
+        else:
+            print("\nFiltered Pylint results for '{}':".format(file_path))
+            for result in filtered_results:
+                print(result)
 
     def analyze_file_with_pylint(self, file_path):
         """Executes pylint static analysis and returns the result."""

@@ -8,9 +8,14 @@ class BanditAnalyzer():
         bandit_results = self.analyze_file_with_bandit(file_path)
         filtered_results = self.filter_bandit_results(
             bandit_results, added_line_numbers)
-        print("Filtered Bandit results:")
-        for result in filtered_results:
-            print(result)
+
+        if not filtered_results:
+            print("\nBandit: No issues found for the newly added or changed lines in '{}'.".format(
+                file_path))
+        else:
+            print("\nFiltered Bandit results for '{}':".format(file_path))
+            for result in filtered_results:
+                print(result)
 
     def analyze_file_with_bandit(self, file_path):
         """Executes Bandit security analysis and returns the result."""

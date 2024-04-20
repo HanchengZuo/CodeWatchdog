@@ -8,9 +8,14 @@ class MypyAnalyzer():
         mypy_results = self.analyze_file_with_mypy(file_path)
         filtered_results = self.filter_mypy_results(
             mypy_results, added_line_numbers)
-        print("Filtered mypy results:")
-        for result in filtered_results:
-            print(result)
+
+        if not filtered_results:
+            print("\nMyPy: No issues found for the newly added or changed lines in '{}'.".format(
+                file_path))
+        else:
+            print("\nFiltered MyPy results for '{}':".format(file_path))
+            for result in filtered_results:
+                print(result)
 
     def analyze_file_with_mypy(self, file_path):
         """Executes mypy static type checking and returns the result."""
