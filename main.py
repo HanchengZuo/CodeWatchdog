@@ -32,13 +32,15 @@ class FileChangeHandler(FileSystemEventHandler):
         self.bandit_analyzer = BanditAnalyzer()
 
     def initialize_file_tracking(self):
-        """Scans the directory to initialize tracking of all Python files."""
-        for root, _, files in os.walk(self.directory):
+        """Scans the directory to initialize tracking of all Python files, ignoring checkpoints."""
+        for root, dirs, files in os.walk(self.directory, topdown=True):
+            # Ignore specific directories
+            dirs[:] = [d for d in dirs if d not in ['.ipynb_checkpoints']]
             for file in files:
                 if file.endswith('.py'):
                     file_path = os.path.join(root, file)
-                    self.load_file(os.path.join(file_path))
-                    if platform.system() == 'Darwin':  # Setting Ignore First Changes on macOS Only
+                    self.load_file(file_path)
+                    if platform.system() == 'Darwin':  # Ignore First Changes on macOS Only
                         self.first_detection_ignored[file_path] = True
 
     def load_file(self, file_path):
@@ -59,6 +61,26 @@ class FileChangeHandler(FileSystemEventHandler):
             hasher.update(line.encode('utf-8'))
         return hasher.hexdigest()
 
+    def safe_get_mtime(self, file_path):
+        """Preventing Temporary Files from Interfering."""
+        try:
+            return os.path.getmtime(file_path)
+        except FileNotFoundError:
+            return None
+
+    def should_ignore_event(self, event):
+        """Determines if the modification event should be ignored based on timing and path."""
+        ignored_paths = ['.~', '__pycache__', '.ipynb_checkpoints']
+        if any(ignored in event.src_path for ignored in ignored_paths):
+            return True
+        if not os.path.exists(event.src_path):
+            return True
+        time.sleep(0.5)
+        last_modified = self.safe_get_mtime(event.src_path)
+        if last_modified is None:
+            return True
+        return (last_modified - self.last_modified_times.get(event.src_path, 0)) < 1
+
     def on_modified(self, event):
         """Handles file modification events."""
         if not event.src_path.endswith('.py') or self.should_ignore_event(event):
@@ -70,12 +92,6 @@ class FileChangeHandler(FileSystemEventHandler):
             return
 
         self.process_modification(event.src_path)
-
-    def should_ignore_event(self, event):
-        """Determines if the modification event should be ignored based on timing."""
-        time.sleep(0.5)
-        last_modified = os.path.getmtime(event.src_path)
-        return (last_modified - self.last_modified_times.get(event.src_path, 0)) < 1
 
     def has_content_changed(self, file_path, new_contents):
         """Checks if the file's content has changed since the last update."""
