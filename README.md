@@ -43,7 +43,9 @@ Please save the file immediately after you get the AI-generated code so that the
 ## FAQ
 
 **Q: How do I stop the monitoring?**
+
 A: The monitor runs in a command line window. You can safely stop the monitoring by using `Ctrl+C` on the command line.
 
 **Q: What types of code analysis are supported?**
+
 A: Currently supported are flake8, pylint, mypy, and bandit. These tools cover code style checking, error detection, type checking, and security analysis.
