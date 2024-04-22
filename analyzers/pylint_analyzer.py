@@ -13,7 +13,7 @@ class PylintAnalyzer():
             print("\nPylint: No issues found for the newly added or changed lines in '{}'.".format(
                 file_path))
         else:
-            print("\nFiltered Pylint results for '{}':".format(file_path))
+            print("\nPylint: Filtered results for '{}':".format(file_path))
             for result in filtered_results:
                 print(result)
 

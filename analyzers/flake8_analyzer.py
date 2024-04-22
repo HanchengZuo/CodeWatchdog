@@ -13,7 +13,7 @@ class Flake8Analyzer():
             print("\n\nFlake8: No issues found for the newly added or changed lines in '{}'.".format(
                 file_path))
         else:
-            print("\n\nFiltered flake8 results for '{}':".format(file_path))
+            print("\n\nFlake8: Filtered results for '{}':".format(file_path))
             for result in filtered_results:
                 print(result)
 
